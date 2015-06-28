@@ -55,6 +55,7 @@ namespace WakaTime {
 		static string TryGetPathFromFixedPath () {
 			string[] locations = {
 				"pythonw",
+				"C:\\Python34\\python.exe",
 				"python",
 				"\\Python37\\pythonw",
 				"\\Python36\\pythonw",

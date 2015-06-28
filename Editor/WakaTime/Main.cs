@@ -88,6 +88,11 @@ namespace WakaTime {
 		}
 
 		static bool ShouldSendFile (string path) {
+			// Contains this Plugin?
+			if (path.Contains ("Assets/Editor/WakaTime")) {
+				return false;
+			}
+
 			bool res = true;
 			if (fileTimes.ContainsKey (path)) {
 				DateTime time;

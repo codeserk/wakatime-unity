@@ -69,7 +69,13 @@ namespace WakaTime {
 				p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
 				p.StartInfo.WorkingDirectory = Application.dataPath; 
+
+#if UNITY_EDITOR_WIN
+				p.StartInfo.UseShellExecute = true;
+#else
 				p.StartInfo.UseShellExecute = false;
+#endif
+
 
 				p.Start ();
 
