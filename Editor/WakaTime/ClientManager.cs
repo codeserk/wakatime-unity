@@ -33,22 +33,6 @@ namespace WakaTime {
 			}
 
 			return true;
-
-			ProcessStartInfo info = new ProcessStartInfo (PythonManager.GetPythonPath () + " " + GetClientPath (), "--version");
-			Process process = new Process ();
-			process.StartInfo = info;
-
-			if (process.Start ()) {
-
-				string error = process.StandardOutput.ReadLine ();
-				process.WaitForExit ();
-
-				UnityEngine.Debug.Log ("Error:" + error);
-
-				return error.Contains (WakaTimeConstants.CURRENT_CLIENT_VERSION);
-			} else {
-				return false;
-			}
 		}
 
 		public static void HeartBeat (string apiKey, string file, bool write = false) {

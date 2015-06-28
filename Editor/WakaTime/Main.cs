@@ -99,12 +99,10 @@ namespace WakaTime {
 
 				fileTimes.TryGetValue (path, out time);
 
-				if (time != null) {
-					double diffInSeconds = (DateTime.Now - time).TotalSeconds;
+				double diffInSeconds = (DateTime.Now - time).TotalSeconds;
 
-					if (diffInSeconds < WakaTimeConstants.TIME_TO_HEARTBEAT) {
-						res = false;
-					}
+				if (diffInSeconds < WakaTimeConstants.TIME_TO_HEARTBEAT) {
+					res = false;
 				}
 			}
 

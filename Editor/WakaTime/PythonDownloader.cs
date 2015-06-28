@@ -14,7 +14,6 @@ namespace WakaTime {
 
 		static public void Download () {
 			string url = PythonManager.GetPythonDownloadUrl ();
-			string dir = ClientManager.BaseDir;
 		
 			www = new WWW (url);
 			EditorApplication.update = WaitingToEnd;

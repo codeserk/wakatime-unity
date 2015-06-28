@@ -110,6 +110,7 @@ namespace WakaTime {
 						continue;
 					}
 				}catch(Exception ex) {
+					ex.ToString();
 					continue;
 				}
 				
