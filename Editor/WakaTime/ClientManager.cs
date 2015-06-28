@@ -52,30 +52,32 @@ namespace WakaTime {
 		}
 
 		public static void HeartBeat (string apiKey, string file, bool write = false) {
-			string arguments = "--key " + apiKey 
-				+ " --file " + file
-				+ " --plugin " + WakaTimeConstants.PLUGIN_NAME
-				+ " --project " + Main.GetProjectName ()
-				+ " --verbose";
+			if (PythonManager.IsPythonInstalled ()) {
+				string arguments = "--key " + apiKey 
+					+ " --file " + file
+					+ " --plugin " + WakaTimeConstants.PLUGIN_NAME
+					+ " --project " + Main.GetProjectName ()
+					+ " --verbose";
 
-			UnityEngine.Debug.Log (PythonManager.GetPythonPath () + " " + GetClientPath () + " " + arguments);
+				UnityEngine.Debug.Log (PythonManager.GetPythonPath () + " " + GetClientPath () + " " + arguments);
 
-			Process p = new Process ();
-			p.StartInfo.FileName = PythonManager.GetPythonPath ();
-			p.StartInfo.Arguments = GetClientPath () + " " + arguments;    
+				Process p = new Process ();
+				p.StartInfo.FileName = PythonManager.GetPythonPath ();
+				p.StartInfo.Arguments = GetClientPath () + " " + arguments;    
 		
-			p.StartInfo.CreateNoWindow = true;
-			p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+				p.StartInfo.CreateNoWindow = true;
+				p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-			p.StartInfo.WorkingDirectory = Application.dataPath; 
-			p.StartInfo.UseShellExecute = false;
+				p.StartInfo.WorkingDirectory = Application.dataPath; 
+				p.StartInfo.UseShellExecute = false;
 
-			p.Start ();
+				p.Start ();
 
 //			UnityEngine.Debug.Log (p.StandardOutput.ReadToEnd ());
 //			UnityEngine.Debug.Log (p.StandardError.ReadToEnd ());
 
-			p.Close ();
+				p.Close ();
+			}
 		}
 	}
 

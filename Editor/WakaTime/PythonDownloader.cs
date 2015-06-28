@@ -26,7 +26,7 @@ namespace WakaTime {
 				int iProgress = (int)(www.progress * 10f);
 
 				if (i < iProgress) {
-					downloadingStr += "-";
+					downloadingStr += "=";
 				} else {
 					downloadingStr += "_";
 				}
@@ -43,7 +43,7 @@ namespace WakaTime {
 
 		static void DownloadCompleted () {
 			UnityEngine.Debug.Log ("Python downloaded: " + www.size.ToString ());
-			string dir = ClientManager.BaseDir;
+			string dir = System.Environment.GetFolderPath (System.Environment.SpecialFolder.ApplicationData);
 			string localFile = dir + PythonManager.GetPythonFileName ();
 
 			try {
@@ -53,7 +53,22 @@ namespace WakaTime {
 				// close file stream
 				stream.Close ();
 
-				UnityEngine.Debug.Log ("File saved!");
+			
+				var arguments = "/i \"" + localFile + "\"";
+				arguments = arguments + " /norestart /qb!";
+
+				UnityEngine.Debug.Log ("localfile:  " + arguments);
+
+				var procInfo = new ProcessStartInfo
+				{
+					UseShellExecute = false,
+					RedirectStandardError = true,
+					FileName = "msiexec",
+					CreateNoWindow = true,
+					Arguments = arguments
+				};
+				
+				Process.Start(procInfo);
 			} catch (Exception ex) {
 
 				UnityEngine.Debug.LogError (ex);

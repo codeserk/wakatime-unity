@@ -99,12 +99,18 @@ namespace WakaTime {
 			};
 			
 			foreach (var location in locations) {
-				ProcessStartInfo info = new ProcessStartInfo (location, "--version");
-				Process process = new Process ();
-				process.StartInfo = info;
+				try {
+					ProcessStartInfo info = new ProcessStartInfo (location, "--version");
+					Process process = new Process ();
+					process.StartInfo = info;
 
-				if (!process.Start ())
+
+					if (!process.Start ()) {
+						continue;
+					}
+				}catch(Exception ex) {
 					continue;
+				}
 				
 				PythonBinaryLocation = location;
 				return location;
