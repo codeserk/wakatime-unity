@@ -51,12 +51,20 @@ namespace WakaTime {
 				return null;
 			}
 		}
-		
+
+		static string GetMainDrive() {
+			return Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
+		}
+
 		static string TryGetPathFromFixedPath () {
 			string[] locations = {
 				"pythonw",
-				"C:\\Python34\\python.exe",
 				"python",
+
+				// Windows
+				GetMainDrive() + "\\Python34\\python.exe",				
+
+				// Etc
 				"\\Python37\\pythonw",
 				"\\Python36\\pythonw",
 				"\\Python35\\pythonw",
@@ -103,8 +111,11 @@ namespace WakaTime {
 				try {
 					ProcessStartInfo info = new ProcessStartInfo (location, "--version");
 					Process process = new Process ();
-					process.StartInfo = info;
 
+					info.UseShellExecute = false;
+					info.CreateNoWindow = true;
+
+					process.StartInfo = info;
 
 					if (!process.Start ()) {
 						continue;

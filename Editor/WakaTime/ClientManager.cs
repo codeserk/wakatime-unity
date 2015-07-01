@@ -22,8 +22,6 @@ namespace WakaTime {
 		}
 
 		public static bool IsClientInstalled () {
-			UnityEngine.Debug.Log ("path:" + GetClientPath () + ": " + File.Exists (GetClientPath ()));
-
 			return File.Exists (GetClientPath ());
 		}
 	
@@ -43,7 +41,9 @@ namespace WakaTime {
 					+ " --project " + Main.GetProjectName ()
 					+ " --verbose";
 
-				UnityEngine.Debug.Log (PythonManager.GetPythonPath () + " " + GetClientPath () + " " + arguments);
+				if(Main.IsDebug) {
+					UnityEngine.Debug.Log ("Sending file: " + PythonManager.GetPythonPath () + " " + GetClientPath () + " " + arguments);
+				}
 
 				Process p = new Process ();
 				p.StartInfo.FileName = PythonManager.GetPythonPath ();
