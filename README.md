@@ -5,6 +5,18 @@ Behold, this is not realted to Ubuntu's Unity.
 # Instructions
 
 - Copy the Editor folder into the *Assets* folder of your project
-- Insert your API key in the WakaTime Window
-- (Windows) Wait until Python is downloaded and installed (You can check the download status in the console). It will most probably ask you some admin permissions.
+
+![Copy the Editor folder](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/Copy.png)
+
+- Insert your API key in the WakaTime Window.
+
+![Insert API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InsertAPIKey.png)
+![Set API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/SetAPIKey.png)
+
+- (Windows) If Python is not installed it will Download and Install it.
+
+![Download Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/DownloadPython.png)
+![Install Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallPython.png)
+![Installing Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallingPython.png)
+
 - Work normally and it will track your time.

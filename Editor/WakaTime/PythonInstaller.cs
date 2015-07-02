@@ -23,8 +23,7 @@ namespace WakaTime {
 		}
 		
 		static bool IsDownloaded() {
-			return false;
-			//return File.Exists (GetFilePath ());
+			return File.Exists (GetFilePath ());
 		}
 
 		static public void DownloadAndInstall() {
