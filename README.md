@@ -1,6 +1,7 @@
 # wakatime-unity
 WakaTime Unity3d (https://unity3d.com/) plugin [UNDER DEV]
-Behold, this is not realted to Ubuntu's Unity.
+
+Behold, this is not related to Ubuntu's Unity.
 
 # Instructions
 
@@ -20,3 +21,7 @@ Behold, this is not realted to Ubuntu's Unity.
 ![Installing Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallingPython.png)
 
 - Work normally and it will track your time.
+
+# [WakaTime](https://wakatime.com/dashboard) Screenshots
+
+![WakaTime Dashboard](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/WakaTime.png)
