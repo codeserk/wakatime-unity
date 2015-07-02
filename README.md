@@ -24,4 +24,4 @@ Behold, this is not related to Ubuntu's Unity.
 
 # [WakaTime](https://wakatime.com/dashboard) Screenshots
 
-![WakaTime Dashboard](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/WakaTime.png)
+![WakaTime Dashboard](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/WakaTime1.png)
