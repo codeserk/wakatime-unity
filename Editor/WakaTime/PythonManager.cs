@@ -31,8 +31,9 @@ namespace WakaTime {
 				var python = pythonKey.GetValue (null).ToString ();
 				var match = regex.Match (python);
 				
-				if (!match.Success)
+				if (!match.Success) {
 					return null;
+				}
 				
 				var directory = match.Groups [1].Value;
 				var fullPath = Path.Combine (directory, "pythonw.exe");
@@ -52,8 +53,12 @@ namespace WakaTime {
 			}
 		}
 
-		static string GetMainDrive() {
+		static string GetMainDrive () {
+#if UNITY_EDITOR_WIN
 			return Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
+#else
+			return "";
+#endif
 		}
 
 		static string TryGetPathFromFixedPath () {
@@ -61,10 +66,10 @@ namespace WakaTime {
 				"pythonw",
 				"python",
 
-				// Windows
-				GetMainDrive() + "\\Python34\\python.exe",				
+			// Windows
+				GetMainDrive () + "\\Python34\\python.exe",				
 
-				// Etc
+			// Etc
 				"\\Python37\\pythonw",
 				"\\Python36\\pythonw",
 				"\\Python35\\pythonw",
@@ -120,8 +125,8 @@ namespace WakaTime {
 					if (!process.Start ()) {
 						continue;
 					}
-				}catch(Exception ex) {
-					ex.ToString();
+				} catch (Exception ex) {
+					ex.ToString ();
 					continue;
 				}
 				
