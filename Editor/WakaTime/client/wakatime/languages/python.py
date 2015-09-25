@@ -10,7 +10,6 @@
 """
 
 from . import TokenParser
-from ..compat import u
 
 
 class PythonParser(TokenParser):
@@ -26,17 +25,17 @@ class PythonParser(TokenParser):
         return self.dependencies
 
     def _process_token(self, token, content):
-        if u(token).split('.')[-1] == 'Namespace':
+        if self.partial(token) == 'Namespace':
             self._process_namespace(token, content)
-        elif u(token).split('.')[-1] == 'Name':
+        elif self.partial(token) == 'Names':
             self._process_name(token, content)
-        elif u(token).split('.')[-1] == 'Word':
+        elif self.partial(token) == 'Word':
             self._process_word(token, content)
-        elif u(token).split('.')[-1] == 'Operator':
+        elif self.partial(token) == 'Operator':
             self._process_operator(token, content)
-        elif u(token).split('.')[-1] == 'Punctuation':
+        elif self.partial(token) == 'Punctuation':
             self._process_punctuation(token, content)
-        elif u(token).split('.')[-1] == 'Text':
+        elif self.partial(token) == 'Text':
             self._process_text(token, content)
         else:
             self._process_other(token, content)
@@ -56,13 +55,13 @@ class PythonParser(TokenParser):
                 self.nonpackage = False
             else:
                 if self.state == 'from':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 if self.state == 'from-2' and content != 'import':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 elif self.state == 'import':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 elif self.state == 'import-2':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 else:
                     self.state = None
 
@@ -72,13 +71,13 @@ class PythonParser(TokenParser):
                 self.nonpackage = False
             else:
                 if self.state == 'from':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 if self.state == 'from-2' and content != 'import':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 elif self.state == 'import':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 elif self.state == 'import-2':
-                    self.append(content, truncate=True, truncate_to=0)
+                    self.append(content, truncate=True, truncate_to=1)
                 else:
                     self.state = None
 
@@ -106,15 +105,15 @@ class PythonParser(TokenParser):
     def _process_import(self, token, content):
         if not self.nonpackage:
             if self.state == 'from':
-                self.append(content, truncate=True, truncate_to=0)
+                self.append(content, truncate=True, truncate_to=1)
                 self.state = 'from-2'
             elif self.state == 'from-2' and content != 'import':
-                self.append(content, truncate=True, truncate_to=0)
+                self.append(content, truncate=True, truncate_to=1)
             elif self.state == 'import':
-                self.append(content, truncate=True, truncate_to=0)
+                self.append(content, truncate=True, truncate_to=1)
                 self.state = 'import-2'
             elif self.state == 'import-2':
-                self.append(content, truncate=True, truncate_to=0)
+                self.append(content, truncate=True, truncate_to=1)
             else:
                 self.state = None
         self.nonpackage = False

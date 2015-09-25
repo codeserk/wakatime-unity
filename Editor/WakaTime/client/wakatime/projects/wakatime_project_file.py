@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    wakatime.projects.wakatime
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    wakatime.projects.wakatime_project_file
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Information from a .wakatime-project file about the project for
     a given file. First line of .wakatime-project sets the project
@@ -13,6 +13,7 @@
 
 import logging
 import os
+import sys
 
 from .base import BaseProject
 from ..compat import u, open
@@ -21,7 +22,7 @@ from ..compat import u, open
 log = logging.getLogger('WakaTime')
 
 
-class WakaTime(BaseProject):
+class WakaTimeProjectFile(BaseProject):
 
     def process(self):
         self.config = self._find_config(self.path)
@@ -34,7 +35,14 @@ class WakaTime(BaseProject):
                 with open(self.config, 'r', encoding='utf-8') as fh:
                     self._project_name = u(fh.readline().strip())
                     self._project_branch = u(fh.readline().strip())
-            except IOError:
+            except UnicodeDecodeError:  # pragma: nocover
+                try:
+                    with open(self.config, 'r', encoding=sys.getfilesystemencoding()) as fh:
+                        self._project_name = u(fh.readline().strip())
+                        self._project_branch = u(fh.readline().strip())
+                except:
+                    log.exception("Exception:")
+            except IOError:  # pragma: nocover
                 log.exception("Exception:")
 
             return True

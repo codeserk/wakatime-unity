@@ -1,6 +1,12 @@
 WakaTime
 ========
 
+.. image:: https://travis-ci.org/wakatime/wakatime.svg
+    :target: https://travis-ci.org/wakatime/wakatime
+
+.. image:: https://coveralls.io/repos/wakatime/wakatime/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/wakatime/wakatime?branch=master
+
 Fully automatic time tracking for programmers.
 
 This is the common interface for the WakaTime api. You shouldn't need to directly use this package unless you are creating a new plugin or your text editor's plugin asks you to install the wakatime cli interface.
@@ -25,6 +31,7 @@ Options can be passed via command line, or set in the ``$HOME/.wakatime.cfg``
 config file. Command line arguments take precedence over config file settings.
 The ``$HOME/.wakatime.cfg`` file is in `INI <http://en.wikipedia.org/wiki/INI_file>`_
 format. An example config file looks like::
+
     [settings]
     debug = false
     api_key = your-api-key
@@ -38,6 +45,7 @@ format. An example config file looks like::
         .*
     offline = true
     proxy = https://user:pass@localhost:8080
+    timeout = 30
 
 
 Installation
@@ -45,15 +53,16 @@ Installation
 
 Each `plugin <https://wakatime.com/plugins>`_ should install wakatime for you, except for the `Emacs WakaTime plugin <https://github.com/wakatime/wakatime-mode>`_.
 If your plugin does not install wakatime cli(this package), install it with::
+
     pip install wakatime
 
 
 Troubleshooting
 ---------------
 
-WakaTime CLI writes errors to a common log file in your User ``$HOME`` directory:
+WakaTime CLI writes errors to a common log file in your User ``$HOME`` directory::
 
-``~/.wakatime.log``
+    ~/.wakatime.log
 
 Set ``debug=true`` in ``~/.wakatime.cfg`` for more verbose logging, but don't forget to set it back to ``debug=false`` afterwards or your editor might be laggy while waiting for wakatime cli to finish executing.
 
@@ -70,7 +79,20 @@ Each plugin also has it's own log file for things outside of the common wakatime
 * **Sublime** Text logs to the Sublime Console (View -> Show Console)
 * **TextMate** logs to stderr so run TextMate from Terminal to see any errors (`enable logging <https://github.com/textmate/textmate/wiki/Enable-Logging>`_)
 * **Vim** errors get displayed in the status line or inline (use ``:redraw!`` to clear inline errors)
-* **Visual Studio** errors go to ActivityLog.xml (`more info... <http://blogs.msdn.com/b/visualstudio/archive/2010/02/24/troubleshooting-with-the-activity-log.aspx>`_)
-* **Xcode** errors go to ``dmesg`` (type ``dmesg`` in a Terminal to view them)
+* **Visual Studio** logs to the Output window, but uncaught exceptions go to ActivityLog.xml (`more info... <http://blogs.msdn.com/b/visualstudio/archive/2010/02/24/troubleshooting-with-the-activity-log.aspx>`_)
+* **Xcode** type ``sudo tail -f /var/log/system.log`` in a Terminal to view Xcode errors
 
 Check that heartbeats are received by the WakaTime api with the ``last_heartbeat`` and ``last_plugin`` attributes from the `current user <https://wakatime.com/api/v1/users/current>`_ api resource. Saving a file forces a heartbeat to be sent.
+
+
+Contributing
+------------
+
+Before contributing a pull request, make sure tests pass::
+
+    virtualenv venv
+    . venv/bin/activate
+    pip install tox
+    tox
+
+Many thanks to all `contributors <https://github.com/wakatime/wakatime/blob/master/AUTHORS>`_!

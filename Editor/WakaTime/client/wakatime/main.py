@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    wakatime.base
+    wakatime.main
     ~~~~~~~~~~~~~
 
     wakatime module entry point.
@@ -19,9 +19,10 @@ import re
 import sys
 import time
 import traceback
+import socket
 try:
     import ConfigParser as configparser
-except ImportError:
+except ImportError:  # pragma: nocover
     import configparser
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -32,14 +33,17 @@ from .compat import u, open, is_py3
 from .logger import setup_logging
 from .offlinequeue import Queue
 from .packages import argparse
-from .packages import simplejson as json
 from .packages.requests.exceptions import RequestException
-from .project import find_project
+from .project import get_project_info
 from .session_cache import SessionCache
 from .stats import get_file_stats
 try:
+    from .packages import simplejson as json  # pragma: nocover
+except (ImportError, SyntaxError):  # pragma: nocover
+    import json
+try:
     from .packages import tzlocal
-except:
+except:  # pragma: nocover
     from .packages import tzlocal3 as tzlocal
 
 
@@ -49,47 +53,12 @@ log = logging.getLogger('WakaTime')
 class FileAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
-        values = os.path.realpath(values)
+        try:
+            if os.path.isfile(values):
+                values = os.path.realpath(values)
+        except:  # pragma: nocover
+            pass
         setattr(namespace, self.dest, values)
-
-
-def upgradeConfigFile(configFile):
-    """For backwards-compatibility, upgrade the existing config file
-    to work with configparser and rename from .wakatime.conf to .wakatime.cfg.
-    """
-
-    if os.path.isfile(configFile):
-        # if upgraded cfg file already exists, don't overwrite it
-        return
-
-    oldConfig = os.path.join(os.path.expanduser('~'), '.wakatime.conf')
-    try:
-        configs = {
-            'ignore': [],
-        }
-
-        with open(oldConfig, 'r', encoding='utf-8') as fh:
-            for line in fh.readlines():
-                line = line.split('=', 1)
-                if len(line) == 2 and line[0].strip() and line[1].strip():
-                    if line[0].strip() == 'ignore':
-                        configs['ignore'].append(line[1].strip())
-                    else:
-                        configs[line[0].strip()] = line[1].strip()
-
-        with open(configFile, 'w', encoding='utf-8') as fh:
-            fh.write("[settings]\n")
-            for name, value in configs.items():
-                if isinstance(value, list):
-                    fh.write("%s=\n" % name)
-                    for item in value:
-                        fh.write("    %s\n" % item)
-                else:
-                    fh.write("%s = %s\n" % (name, value))
-
-        os.remove(oldConfig)
-    except IOError:
-        pass
 
 
 def parseConfigFile(configFile=None):
@@ -100,8 +69,6 @@ def parseConfigFile(configFile=None):
 
     if not configFile:
         configFile = os.path.join(os.path.expanduser('~'), '.wakatime.cfg')
-
-    upgradeConfigFile(configFile)
 
     configs = configparser.SafeConfigParser()
     try:
@@ -116,23 +83,21 @@ def parseConfigFile(configFile=None):
     return configs
 
 
-def parseArguments(argv):
+def parseArguments():
     """Parse command line arguments and configs from ~/.wakatime.cfg.
     Command line arguments take precedence over config file settings.
     Returns instances of ArgumentParser and SafeConfigParser.
     """
 
-    try:
-        sys.argv
-    except AttributeError:
-        sys.argv = argv
-
     # define supported command line arguments
     parser = argparse.ArgumentParser(
             description='Common interface for the WakaTime api.')
-    parser.add_argument('--file', dest='targetFile', metavar='file',
-            action=FileAction, required=True,
-            help='absolute path to file for current heartbeat')
+    parser.add_argument('--entity', dest='entity', metavar='FILE',
+            action=FileAction,
+            help='absolute path to file for the heartbeat; can also be a '+
+                 'url, domain, or app when --entitytype is not file')
+    parser.add_argument('--file', dest='file', action=FileAction,
+            help=argparse.SUPPRESS)
     parser.add_argument('--key', dest='key',
             help='your wakatime api key; uses api_key from '+
                 '~/.wakatime.conf by default')
@@ -151,9 +116,9 @@ def parseArguments(argv):
             help='optional line number; current line being edited')
     parser.add_argument('--cursorpos', dest='cursorpos',
             help='optional cursor position in the current file')
-    parser.add_argument('--notfile', dest='notfile', action='store_true',
-            help='when set, will accept any value for the file. for example, '+
-                 'a domain name or other item you want to log time towards.')
+    parser.add_argument('--entitytype', dest='entity_type',
+            help='entity type for this heartbeat. can be one of "file", '+
+                 '"url", "domain", or "app"; defaults to file.')
     parser.add_argument('--proxy', dest='proxy',
                         help='optional https proxy url; for example: '+
                         'https://user:pass@localhost:8080')
@@ -161,6 +126,7 @@ def parseArguments(argv):
             help='optional project name')
     parser.add_argument('--alternate-project', dest='alternate_project',
             help='optional alternate project name; auto-discovered project takes priority')
+    parser.add_argument('--hostname', dest='hostname', help='hostname of current machine.')
     parser.add_argument('--disableoffline', dest='offline',
             action='store_false',
             help='disables offline time logging instead of queuing logged time')
@@ -180,6 +146,8 @@ def parseArguments(argv):
             help='defaults to ~/.wakatime.log')
     parser.add_argument('--apiurl', dest='api_url',
             help='heartbeats api url; for debugging with a local server')
+    parser.add_argument('--timeout', dest='timeout', type=int,
+            help='number of seconds to wait when sending heartbeats to api')
     parser.add_argument('--config', dest='config',
             help='defaults to ~/.wakatime.conf')
     parser.add_argument('--verbose', dest='verbose', action='store_true',
@@ -187,7 +155,7 @@ def parseArguments(argv):
     parser.add_argument('--version', action='version', version=__version__)
 
     # parse command line arguments
-    args = parser.parse_args(args=argv[1:])
+    args = parser.parse_args()
 
     # use current unix epoch timestamp by default
     if not args.timestamp:
@@ -209,6 +177,13 @@ def parseArguments(argv):
             args.key = default_key
         else:
             parser.error('Missing api key')
+    if not args.entity_type:
+        args.entity_type = 'file'
+    if not args.entity:
+        if args.file:
+            args.entity = args.file
+        else:
+            parser.error('argument --entity is required')
     if not args.exclude:
         args.exclude = []
     if configs.has_option('settings', 'ignore'):
@@ -248,37 +223,42 @@ def parseArguments(argv):
         args.logfile = configs.get('settings', 'logfile')
     if not args.api_url and configs.has_option('settings', 'api_url'):
         args.api_url = configs.get('settings', 'api_url')
+    if not args.timeout and configs.has_option('settings', 'timeout'):
+        try:
+            args.timeout = int(configs.get('settings', 'timeout'))
+        except ValueError:
+            print(traceback.format_exc())
 
     return args, configs
 
 
-def should_exclude(fileName, include, exclude):
-    if fileName is not None and fileName.strip() != '':
+def should_exclude(entity, include, exclude):
+    if entity is not None and entity.strip() != '':
         try:
             for pattern in include:
                 try:
                     compiled = re.compile(pattern, re.IGNORECASE)
-                    if compiled.search(fileName):
+                    if compiled.search(entity):
                         return False
                 except re.error as ex:
                     log.warning(u('Regex error ({msg}) for include pattern: {pattern}').format(
                         msg=u(ex),
                         pattern=u(pattern),
                     ))
-        except TypeError:
+        except TypeError:  # pragma: nocover
             pass
         try:
             for pattern in exclude:
                 try:
                     compiled = re.compile(pattern, re.IGNORECASE)
-                    if compiled.search(fileName):
+                    if compiled.search(entity):
                         return pattern
                 except re.error as ex:
                     log.warning(u('Regex error ({msg}) for exclude pattern: {pattern}').format(
                         msg=u(ex),
                         pattern=u(pattern),
                     ))
-        except TypeError:
+        except TypeError:  # pragma: nocover
             pass
     return False
 
@@ -303,26 +283,25 @@ def get_user_agent(plugin):
     return user_agent
 
 
-def send_heartbeat(project=None, branch=None, stats={}, key=None, targetFile=None,
-        timestamp=None, isWrite=None, plugin=None, offline=None, notfile=False,
-        hidefilenames=None, proxy=None, api_url=None, **kwargs):
+def send_heartbeat(project=None, branch=None, hostname=None, stats={}, key=None, entity=None,
+        timestamp=None, isWrite=None, plugin=None, offline=None, entity_type='file',
+        hidefilenames=None, proxy=None, api_url=None, timeout=None, **kwargs):
     """Sends heartbeat as POST request to WakaTime api server.
     """
 
     if not api_url:
         api_url = 'https://wakatime.com/api/v1/heartbeats'
+    if not timeout:
+        timeout = 30
     log.debug('Sending heartbeat to api at %s' % api_url)
     data = {
         'time': timestamp,
-        'entity': targetFile,
-        'type': 'file',
+        'entity': entity,
+        'type': entity_type,
     }
-    if hidefilenames and targetFile is not None and not notfile:
-        data['entity'] = data['entity'].rsplit('/', 1)[-1].rsplit('\\', 1)[-1]
-        if len(data['entity'].strip('.').split('.', 1)) > 1:
-            data['entity'] = u('HIDDEN.{ext}').format(ext=u(data['entity'].strip('.').rsplit('.', 1)[-1]))
-        else:
-            data['entity'] = u('HIDDEN')
+    if hidefilenames and entity is not None and entity_type == 'file':
+        extension = u(os.path.splitext(data['entity'])[1])
+        data['entity'] = u('HIDDEN{0}').format(extension)
     if stats.get('lines'):
         data['lines'] = stats['lines']
     if stats.get('language'):
@@ -351,6 +330,8 @@ def send_heartbeat(project=None, branch=None, stats={}, key=None, targetFile=Non
         'Accept': 'application/json',
         'Authorization': auth,
     }
+    if hostname:
+        headers['X-Machine-Name'] = hostname
     proxies = {}
     if proxy:
         proxies['https'] = proxy
@@ -370,7 +351,7 @@ def send_heartbeat(project=None, branch=None, stats={}, key=None, targetFile=Non
     response = None
     try:
         response = session.post(api_url, data=request_body, headers=headers,
-                                 proxies=proxies)
+                                 proxies=proxies, timeout=timeout)
     except RequestException:
         exception_data = {
             sys.exc_info()[0].__name__: u(sys.exc_info()[1]),
@@ -421,44 +402,39 @@ def send_heartbeat(project=None, branch=None, stats={}, key=None, targetFile=Non
     return False
 
 
-def main(argv=None):
-    if not argv:
-        argv = sys.argv
+def execute(argv=None):
+    if argv:
+        sys.argv = ['wakatime'] + argv
 
-    args, configs = parseArguments(argv)
+    args, configs = parseArguments()
     if configs is None:
         return 103 # config file parsing error
 
     setup_logging(args, __version__)
 
-    exclude = should_exclude(args.targetFile, args.include, args.exclude)
+    exclude = should_exclude(args.entity, args.include, args.exclude)
     if exclude is not False:
-        log.debug(u('File not logged because matches exclude pattern: {pattern}').format(
+        log.debug(u('Skipping because matches exclude pattern: {pattern}').format(
             pattern=u(exclude),
         ))
         return 0
 
-    if os.path.isfile(args.targetFile) or args.notfile:
+    if args.entity_type != 'file' or os.path.isfile(args.entity):
 
-        stats = get_file_stats(args.targetFile, notfile=args.notfile,
+        stats = get_file_stats(args.entity, entity_type=args.entity_type,
                                lineno=args.lineno, cursorpos=args.cursorpos)
 
-        project = None
-        if not args.notfile:
-            project = find_project(args.targetFile, configs=configs)
+        project = args.project or args.alternate_project
         branch = None
-        project_name = args.project
-        if project:
-            branch = project.branch()
-            if not project_name:
-                project_name = project.name()
-        if not project_name:
-            project_name = args.alternate_project
+        if args.entity_type == 'file':
+            project, branch = get_project_info(configs, args)
 
         kwargs = vars(args)
-        kwargs['project'] = project_name
+        kwargs['project'] = project
         kwargs['branch'] = branch
         kwargs['stats'] = stats
+        kwargs['hostname'] = args.hostname or socket.gethostname()
+        kwargs['timeout'] = args.timeout
 
         if send_heartbeat(**kwargs):
             queue = Queue()
@@ -468,18 +444,20 @@ def main(argv=None):
                     break
                 sent = send_heartbeat(
                     project=heartbeat['project'],
-                    targetFile=heartbeat['file'],
+                    entity=heartbeat['entity'],
                     timestamp=heartbeat['time'],
                     branch=heartbeat['branch'],
+                    hostname=kwargs['hostname'],
                     stats=json.loads(heartbeat['stats']),
                     key=args.key,
                     isWrite=heartbeat['is_write'],
                     plugin=heartbeat['plugin'],
                     offline=args.offline,
                     hidefilenames=args.hidefilenames,
-                    notfile=args.notfile,
+                    entity_type=heartbeat['type'],
                     proxy=args.proxy,
                     api_url=args.api_url,
+                    timeout=args.timeout,
                 )
                 if not sent:
                     break
