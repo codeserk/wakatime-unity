@@ -47,7 +47,7 @@ namespace WakaTime {
 
 				Process p = new Process();
 				p.StartInfo.FileName = PythonManager.GetPythonPath();
-				p.StartInfo.Arguments = GetClientPath() + " " + arguments;    
+				p.StartInfo.Arguments = "\"" + GetClientPath() + " " + arguments + "\"";     
 		
 				p.StartInfo.CreateNoWindow = true;
 				p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
