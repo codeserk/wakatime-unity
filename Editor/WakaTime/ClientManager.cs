@@ -36,7 +36,7 @@ namespace WakaTime {
 		public static void HeartBeat(string apiKey, string file, bool write = false) {
 			if (PythonManager.IsPythonInstalled()) {
 				string arguments = "--key " + apiKey
-				                   + " --file " + file
+                                   + " --file " + "\"" + file + "\""
 				                   + " --plugin " + WakaTimeConstants.PLUGIN_NAME
 				                   + " --project " + Main.GetProjectName()
 				                   + " --verbose";
@@ -47,7 +47,7 @@ namespace WakaTime {
 
 				Process p = new Process();
 				p.StartInfo.FileName = PythonManager.GetPythonPath();
-				p.StartInfo.Arguments = "\"" + GetClientPath() + " " + arguments + "\"";     
+                p.StartInfo.Arguments = "\"" + GetClientPath() + "\" " + arguments;  
 		
 				p.StartInfo.CreateNoWindow = true;
 				p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
