@@ -105,7 +105,7 @@ namespace WakaTime {
 			if(IsEnabled) {
 				if (key == null || key.Equals ("")) {
 					if (!Window.IsFocused ()) {
-						if (EditorUtility.DisplayDialog ("WakaTime API Key required", "You need to insert your API Key so as tu use this Plugin", "Insert API Key", "Disable Wakatime")) {
+						if (EditorUtility.DisplayDialog ("WakaTime API Key required", "You need to insert your API Key to use this Plugin", "Insert API Key", "Disable Wakatime")) {
 						 	Window.GetWindow ().Show ();
 							Window.GetWindow ().Focus ();
 						} else {
