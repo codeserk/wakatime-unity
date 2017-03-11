@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using UnityEditor.SceneManagement;
 
 using System;
 using System.IO.Compression;
@@ -71,7 +72,7 @@ namespace WakaTime {
 			_enabled = EditorPrefs.GetBool (KEY_ENABLED, true);
 			_debug = EditorPrefs.GetBool (KEY_DEBUG, false);
 
-			currentScene = EditorApplication.currentScene;
+			currentScene = EditorSceneManager.GetActiveScene().name;
 			EditorApplication.hierarchyWindowChanged += OnWindowChanged;
 
 			Check ();
@@ -80,8 +81,8 @@ namespace WakaTime {
 
 
 		private static void OnWindowChanged () {
-			if (currentScene != EditorApplication.currentScene) {
-				currentScene = EditorApplication.currentScene;
+			if (currentScene != EditorSceneManager.GetActiveScene().name) {
+				currentScene = EditorSceneManager.GetActiveScene().name;
 
 				// Current scene changed
 				OnSceneChanged (GetProjectPath () + currentScene);
