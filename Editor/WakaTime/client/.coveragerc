@@ -1,4 +1,0 @@
-[run]
-branch = false
-omit =
-    wakatime/packages/*
