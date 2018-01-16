@@ -5,6 +5,21 @@ Behold, this is not related to Ubuntu's Unity.
 
 # Instructions
 
+## Installation
+
+- Clone the repository into your computer
+```
+  # Using SSH
+  git clone git@github.com:josec89/wakatime-unity.git`
+
+  # Or using HTTPS
+  git clone https://github.com/josec89/wakatime-unity.git`
+```
+
+- Get the latest version of the submodules (WakaTime python client)
+```
+  git submodule update --init
+```
 - Copy the Editor folder into the *Assets* folder of your project
 
 ![Copy the Editor folder](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/Copy.png)
@@ -25,3 +40,7 @@ Behold, this is not related to Ubuntu's Unity.
 # [WakaTime](https://wakatime.com/dashboard) Screenshots
 
 ![WakaTime Dashboard](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/WakaTime1.png)
+
+# Troubleshooting
+
+This project depends on the WakaTime client. If this project stops working, try to update the wakatime client located on `Editor/WakaTime/client` (or reinstall this package following the instructions again).
