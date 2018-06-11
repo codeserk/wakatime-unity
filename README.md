@@ -14,22 +14,22 @@ Behold, this is not related to Ubuntu's Unity.
   git clone https://github.com/josec89/wakatime-unity.git`
 ```
 
-- Get the latest version of the submodules (WakaTime python client)
+### 2. Get the latest version of the submodules (WakaTime python client)
 ```
   git submodule update --init
 ```
-### 2. Copy the Editor folder into the root *Assets* folder of your project
+### 3. Copy the Editor folder into the root *Assets* folder of your project
 
 **(The Editor folder MUST be in the root of Assets)**
 
 ![Copy the Editor folder](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/Copy.png)
 
-### 3. Insert your API key in the WakaTime Window.
+### 4. Insert your API key in the WakaTime Window.
 
 ![Insert API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InsertAPIKey.png)
 ![Set API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/SetAPIKey.png)
 
-### 4. (Windows) If Python is not installed it will Download and Install it.
+### 5. (Windows) If Python is not installed it will Download and Install it.
 
 ![Download Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/DownloadPython.png)
 ![Install Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallPython.png)
