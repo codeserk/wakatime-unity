@@ -35,7 +35,7 @@ Behold, this is not related to Ubuntu's Unity.
 ![Install Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallPython.png)
 ![Installing Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallingPython.png)
 
-- Work normally and it will track your time.
+### 6.  Work normally and it will track your time.
 
 # [WakaTime](https://wakatime.com/dashboard) Screenshots
 
