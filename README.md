@@ -3,7 +3,14 @@ WakaTime Unity3d (https://unity3d.com/) plugin
 
 Behold, this is not related to Ubuntu's Unity.
 
-## Installation
+# Installation
+
+## Option 1: Quick Install Version
+[**DOWNLOAD & Import unitypackage.**](https://github.com/TheLouisHong/wakatime-unity/releases)
+
+*If this option does not work try option 2.*
+
+## Option 2: Manual Installation Alternative
 
 ### 1. Clone the repository into your computer
 ```
