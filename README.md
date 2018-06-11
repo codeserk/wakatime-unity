@@ -1,9 +1,7 @@
 # wakatime-unity
-WakaTime Unity3d (https://unity3d.com/) plugin [UNDER DEV]
+WakaTime Unity3d (https://unity3d.com/) plugin
 
 Behold, this is not related to Ubuntu's Unity.
-
-# Instructions
 
 ## Installation
 
