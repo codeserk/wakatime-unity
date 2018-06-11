@@ -5,7 +5,7 @@ Behold, this is not related to Ubuntu's Unity.
 
 ## Installation
 
-- Clone the repository into your computer
+### 1. Clone the repository into your computer
 ```
   # Using SSH
   git clone git@github.com:josec89/wakatime-unity.git`
@@ -18,16 +18,18 @@ Behold, this is not related to Ubuntu's Unity.
 ```
   git submodule update --init
 ```
-- Copy the Editor folder into the *Assets* folder of your project
+### 2. Copy the Editor folder into the root *Assets* folder of your project
+
+**(The Editor folder MUST be in the root of Assets)**
 
 ![Copy the Editor folder](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/Copy.png)
 
-- Insert your API key in the WakaTime Window.
+### 3. Insert your API key in the WakaTime Window.
 
 ![Insert API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InsertAPIKey.png)
 ![Set API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/SetAPIKey.png)
 
-- (Windows) If Python is not installed it will Download and Install it.
+### 4. (Windows) If Python is not installed it will Download and Install it.
 
 ![Download Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/DownloadPython.png)
 ![Install Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallPython.png)
