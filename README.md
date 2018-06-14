@@ -1,13 +1,18 @@
 # wakatime-unity
-WakaTime Unity3d (https://unity3d.com/) plugin [UNDER DEV]
+WakaTime Unity3d (https://unity3d.com/) plugin
 
 Behold, this is not related to Ubuntu's Unity.
 
-# Instructions
+# Installation
 
-## Installation
+## Option 1: Quick Install Version
+[**DOWNLOAD & Import unitypackage.**](https://github.com/TheLouisHong/wakatime-unity/releases)
 
-- Clone the repository into your computer
+*If this option does not work try option 2.*
+
+## Option 2: Manual Installation Alternative
+
+### 1. Clone the repository into your computer
 ```
   # Using SSH
   git clone git@github.com:josec89/wakatime-unity.git`
@@ -16,26 +21,28 @@ Behold, this is not related to Ubuntu's Unity.
   git clone https://github.com/josec89/wakatime-unity.git`
 ```
 
-- Get the latest version of the submodules (WakaTime python client)
+### 2. Get the latest version of the submodules (WakaTime python client)
 ```
   git submodule update --init
 ```
-- Copy the Editor folder into the *Assets* folder of your project
+### 3. Copy the Editor folder into the root *Assets* folder of your project
+
+**(The Editor folder MUST be in the root of Assets)**
 
 ![Copy the Editor folder](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/Copy.png)
 
-- Insert your API key in the WakaTime Window.
+### 4. Insert your API key in the WakaTime Window.
 
 ![Insert API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InsertAPIKey.png)
 ![Set API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/SetAPIKey.png)
 
-- (Windows) If Python is not installed it will Download and Install it.
+### 5. (Windows) If Python is not installed it will Download and Install it.
 
 ![Download Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/DownloadPython.png)
 ![Install Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallPython.png)
 ![Installing Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallingPython.png)
 
-- Work normally and it will track your time.
+### 6.  Work normally and it will track your time.
 
 # [WakaTime](https://wakatime.com/dashboard) Screenshots
 
