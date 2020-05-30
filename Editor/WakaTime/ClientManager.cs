@@ -72,7 +72,7 @@ namespace WakaTime
 			string arguments = "--key " + apiKey +
 				" --file " + "\"" + file + "\"" +
 				" --plugin " + WakaTimeConstants.PLUGIN_NAME +
-				" --project " + Main.GetProjectName() +
+				" --project " + "\"" + Main.GetProjectName() + "\"" +
 				" --verbose";
 
 			if (Main.IsDebug)
