@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace WakaTime
 {
 	/// <summary>
-	/// Manages pythong installation.
+	/// Manages python installation.
 	/// </summary>
 	static class PythonManager
 	{
@@ -107,7 +107,7 @@ namespace WakaTime
 				"python",
 
 			// Windows
-				GetMainDrive () + "\\Python34\\python.exe",				
+				GetMainDrive () + "\\Python34\\python.exe",
 
 			// Etc
 				"\\Python37\\pythonw",

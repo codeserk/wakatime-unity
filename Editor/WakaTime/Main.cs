@@ -167,7 +167,7 @@ namespace WakaTime
 		{
 			bool res = false;
 
-			// Checking pythong client is expensive, so only do if the API key is set.
+			// Checking python client is expensive, so only do if the API key is set.
 			if (CheckAPIKey())
 			{
 				res = CheckPython();
@@ -286,7 +286,7 @@ namespace WakaTime
 
 		/// <summary>
 		/// Request notify file change to wakatime.
-		/// 
+		///
 		/// TODO: Check what was `write` about.
 		/// </summary>
 		/// <param name="path">File path</param>
