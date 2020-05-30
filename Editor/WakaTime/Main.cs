@@ -195,6 +195,7 @@ namespace WakaTime
 						{
 							Window.GetWindow().Show();
 							Window.GetWindow().Focus();
+							IsEnabled = false;
 						}
 						else
 						{
