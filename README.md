@@ -13,36 +13,45 @@ Behold, this is not related to Ubuntu's Unity.
 ## Option 2: Manual Installation Alternative
 
 ### 1. Clone the repository into your computer
-```
+```bash
   # Using SSH
-  git clone git@github.com:josec89/wakatime-unity.git`
+  git clone git@github.com:josec89/wakatime-unity.git
 
   # Or using HTTPS
-  git clone https://github.com/josec89/wakatime-unity.git`
+  git clone https://github.com/josec89/wakatime-unity.git
 ```
 
 ### 2. Get the latest version of the submodules (WakaTime python client)
-```
+```bash
   git submodule update --init
 ```
-### 3. Copy the Editor folder into the root *Assets* folder of your project
+
+### 3. Remove `test` folder in from wakatime client
+
+Otherwise you will get some errors in Unity.
+
+```bash
+  rm -rf Editor/WakaTime/client/tests
+```
+
+### 4. Copy the Editor folder into the root *Assets* folder of your project
 
 **(The Editor folder MUST be in the root of Assets)**
 
 ![Copy the Editor folder](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/Copy.png)
 
-### 4. Insert your API key in the WakaTime Window.
+### 5. Insert your API key in the WakaTime Window.
 
 ![Insert API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InsertAPIKey.png)
 ![Set API Key](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/SetAPIKey.png)
 
-### 5. (Windows) If Python is not installed it will Download and Install it.
+### 6. (Windows) If Python is not installed it will Download and Install it.
 
 ![Download Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/DownloadPython.png)
 ![Install Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallPython.png)
 ![Installing Python](https://raw.githubusercontent.com/josec89/wakatime-unity/master/Screenshots/InstallingPython.png)
 
-### 6.  Work normally and it will track your time.
+### 7.  Work normally and it will track your time.
 
 # [WakaTime](https://wakatime.com/dashboard) Screenshots
 
