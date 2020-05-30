@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace WakaTime
 {
@@ -27,7 +28,7 @@ namespace WakaTime
 		/// </summary>
 		static void OnUndoRedo()
 		{
-			string path = Main.GetProjectPath() + EditorApplication.currentScene;
+			string path = Main.GetProjectPath() + UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 			Main.OnSceneChanged(path);
 		}
 
@@ -40,7 +41,7 @@ namespace WakaTime
 		{
 			sceneIsDirty = true;
 
-			string path = Main.GetProjectPath() + EditorApplication.currentScene;
+			string path = Main.GetProjectPath() + UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 			Main.OnSceneChanged(path);
 
 			return propertyModifications;

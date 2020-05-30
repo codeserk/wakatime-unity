@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 using System;
 
@@ -135,9 +136,8 @@ namespace WakaTime
 			_enabled = EditorPrefs.GetBool(KEY_ENABLED, true);
 			_debug = EditorPrefs.GetBool(KEY_DEBUG, false);
 
-			// TODO: Fix deprecation problems.
-			currentScene = EditorApplication.currentScene;
-			EditorApplication.hierarchyWindowChanged += OnWindowChanged;
+			currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+			EditorApplication.hierarchyChanged += OnWindowChanged;
 
 			Check();
 		}
@@ -148,9 +148,9 @@ namespace WakaTime
 		/// </summary>
 		private static void OnWindowChanged()
 		{
-			if (currentScene != EditorApplication.currentScene)
+			if (currentScene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name)
 			{
-				currentScene = EditorApplication.currentScene;
+				currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
 				// Current scene changed
 				OnSceneChanged(GetProjectPath() + currentScene);
@@ -167,7 +167,7 @@ namespace WakaTime
 		{
 			bool res = false;
 
-			// Checking python client is expensive, so only do if the API key is set.
+			// Checking pythong client is expensive, so only do if the API key is set.
 			if (CheckAPIKey())
 			{
 				res = CheckPython();
