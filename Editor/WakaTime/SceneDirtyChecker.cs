@@ -1,29 +1,47 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
+﻿using UnityEditor;
 
-namespace WakaTime {
-
+namespace WakaTime
+{
+	/// <summary>
+	/// Checks if the scene is dirty.
+	/// </summary>
 	[InitializeOnLoad]
-	public class SceneDirtyChecker {
-
+	public class SceneDirtyChecker
+	{
+		/// <summary>
+		/// Whether the scene is dirty
+		/// </summary>
 		public static bool sceneIsDirty = false;
-	
-		static SceneDirtyChecker () {
+
+		/// <summary>
+		/// Checker.
+		/// </summary>
+		static SceneDirtyChecker()
+		{
 			Undo.postprocessModifications += OnPostProcessModifications;
 			Undo.undoRedoPerformed += OnUndoRedo;
 		}
-	
-		static void OnUndoRedo () {
-			string path = Main.GetProjectPath () + EditorApplication.currentScene;
-			Main.OnSceneChanged (path);
+
+		/// <summary>
+		/// Handles undo and redo events.
+		/// </summary>
+		static void OnUndoRedo()
+		{
+			string path = Main.GetProjectPath() + EditorApplication.currentScene;
+			Main.OnSceneChanged(path);
 		}
-	
-		static UndoPropertyModification[] OnPostProcessModifications (UndoPropertyModification[] propertyModifications) {
+
+		/// <summary>
+		/// Handles modifications events.
+		/// </summary>
+		/// <param name="propertyModifications"></param>
+		/// <returns></returns>
+		static UndoPropertyModification[] OnPostProcessModifications(UndoPropertyModification[] propertyModifications)
+		{
 			sceneIsDirty = true;
 
-			string path = Main.GetProjectPath () + EditorApplication.currentScene;
-			Main.OnSceneChanged (path);
+			string path = Main.GetProjectPath() + EditorApplication.currentScene;
+			Main.OnSceneChanged(path);
 
 			return propertyModifications;
 		}

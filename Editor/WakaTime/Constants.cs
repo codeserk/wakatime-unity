@@ -1,12 +1,23 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace WakaTime {
-	internal static class WakaTimeConstants {
-		internal const string CURRENT_CLIENT_VERSION = "4.0.14"; //https://github.com/wakatime/wakatime/blob/master/HISTORY.rst
-		internal const string CLIENT_URL = "https://github.com/wakatime/wakatime/archive/master.zip";
+﻿namespace WakaTime
+{
+	/// <summary>
+	/// WakaTime constant.
+	/// </summary>
+	internal static class WakaTimeConstants
+	{
+		/// <summary>
+		/// Name of the plugin.
+		/// </summary>
 		internal const string PLUGIN_NAME = "unity-wakatime";
+
+		/// <summary>
+		/// Name of the editor.
+		/// </summary>
 		internal const string EDITOR_NAME = "unity";
+
+		/// <summary>
+		/// Time in seconds to send heart beat.
+		/// </summary>
 		internal const int TIME_TO_HEARTBEAT = 120;
 	}
 }
