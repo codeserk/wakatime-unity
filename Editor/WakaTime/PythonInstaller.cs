@@ -5,6 +5,8 @@ using System.Diagnostics;
 
 using System.IO;
 
+#pragma warning disable 612, 618
+
 namespace WakaTime
 {
 	/// <summary>
@@ -122,7 +124,7 @@ namespace WakaTime
 
 			if (Main.IsDebug)
 			{
-				UnityEngine.Debug.Log("Python downloaded: " + www.size.ToString());
+				UnityEngine.Debug.Log("Python downloaded: " + www.bytesDownloaded.ToString());
 			}
 			string dir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
 			string localFile = dir + PythonManager.GetPythonFileName();
@@ -184,3 +186,5 @@ namespace WakaTime
 		}
 	}
 }
+
+#pragma warning restore 612, 618

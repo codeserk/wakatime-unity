@@ -41,6 +41,8 @@ namespace WakaTime
 			{
 				EditorGUILayout.HelpBox("API Key is required", MessageType.Error, false);
 			}
+			Main.MaxRequests = EditorGUILayout.IntField("Max Requests", Main.MaxRequests);
+			EditorGUILayout.HelpBox("Maximum number of simultaneous requests to wakatime. Be cautious when increasing this value, since that might cause CPU problems.", MessageType.Info, true);
 
 			EditorGUILayout.Separator();
 

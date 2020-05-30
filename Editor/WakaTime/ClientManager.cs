@@ -1,14 +1,55 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace WakaTime
 {
+	/// <summary>
+	/// Client request.
+	/// Contains the information needed to make 1 wakatime heartbeat.
+	/// </summary>
+	public readonly struct ClientRequest
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="apiKey"></param>
+		/// <param name="file"></param>
+		public ClientRequest(string apiKey, string file)
+		{
+			this.apiKey = apiKey;
+			this.file = file;
+		}
+
+		/// <summary>
+		/// WakaTime API Key
+		/// </summary>
+		public readonly string apiKey;
+
+		/// <summary>
+		/// File to sned to wakatime.
+		/// </summary>
+		public readonly string file;
+	}
+
 	/// <summary>
 	/// Handles operations with wakatime client.
 	/// </summary>
 	public class ClientManager
 	{
+		/// <summary>
+		/// Requests stacks
+		/// </summary>
+		protected static readonly Queue<ClientRequest> requests = new Queue<ClientRequest>();
+
+		/// <summary>
+		/// Number of active requests.
+		/// </summary>
+		protected static int activeRequests = 0;
+
 		/// <summary>
 		/// Gets the base directory where wakatime is installed.
 		/// </summary>
@@ -65,54 +106,90 @@ namespace WakaTime
 		/// <param name="apiKey"></param>
 		/// <param name="file"></param>
 		/// <param name="write"></param>
-		public static void HeartBeat(string apiKey, string file, bool write = false)
+		public async static Task HeartBeat(string apiKey, string file, bool write = false)
 		{
-			if (!PythonManager.IsPythonInstalled()) return;
-
-			string arguments = "--key " + apiKey +
-				" --file " + "\"" + file + "\"" +
-				" --plugin " + WakaTimeConstants.PLUGIN_NAME +
-				" --project " + "\"" + Main.GetProjectName() + "\"" +
-				" --verbose";
-
-			if (Main.IsDebug)
+			if (activeRequests < Main.MaxRequests)
 			{
-				UnityEngine.Debug.Log("[wakatime] Sending file: " + PythonManager.GetPythonPath() + " " + GetClientPath() +
-					" " + arguments);
-			}
+				activeRequests++;
 
-			Process p = new Process
-			{
-				StartInfo = {
-					FileName = PythonManager.GetPythonPath (),
-					Arguments = "\"" + GetClientPath () + "\" " + arguments,
-					CreateNoWindow = true,
-					WindowStyle = ProcessWindowStyle.Hidden,
-					WorkingDirectory = Application.dataPath,
-					UseShellExecute = false,
-					RedirectStandardOutput = true,
-					RedirectStandardError = true
-				}
-			};
-
-			p.Start();
-
-			if (Main.IsDebug)
-			{
-				var output = p.StandardOutput.ReadToEnd();
-				if (output.Length > 0)
+				if (Main.IsDebug)
 				{
-					UnityEngine.Debug.Log("[wakatime] Output: " + output);
+					UnityEngine.Debug.Log("[wakatime] Making request: " + activeRequests + " / " + Main.MaxRequests + " (enqueued: " + requests.Count + ")");
 				}
 
-				var errors = p.StandardError.ReadToEnd();
-				if (errors.Length > 0)
+				var dataPath = Application.dataPath;
+				var projectName = Main.GetProjectName();
+				var clientPath = GetClientPath();
+				await Task.Run(() => MakeRequest(apiKey, file, projectName, dataPath, clientPath));
+
+				activeRequests--;
+				if (requests.Count > 0)
 				{
-					UnityEngine.Debug.LogError("[wakatime] Error: " + errors);
+					var request = requests.Dequeue();
+					await HeartBeat(request.apiKey, request.file);
 				}
 			}
+			else
+			{
+				if (Main.IsDebug)
+				{
+					UnityEngine.Debug.Log("[wakatime] Request enqueued (" + requests.Count + ")");
+				}
 
-			p.Close();
+				requests.Enqueue(new ClientRequest(apiKey, file));
+			}
+		}
+
+		/// <summary>
+		/// Sends a heart-beat to wakatime.
+		/// Only works if the client is not installed.
+		/// </summary>
+		/// <param name="apiKey"></param>
+		/// <param name="projectName"></param>
+		/// <param name="file"></param>
+		/// <param name="dataPath"></param>
+		/// <param name="clientPath"></param>
+		protected static void MakeRequest(string apiKey, string file, string projectName, string dataPath, string clientPath)
+		{
+			try
+			{
+				string arguments = "--key " + apiKey +
+					" --file " + "\"" + file + "\"" +
+					" --plugin " + WakaTimeConstants.PLUGIN_NAME +
+					" --project " + "\"" + projectName + "\"" +
+					" --verbose";
+
+				if (Main.IsDebug)
+				{
+					UnityEngine.Debug.Log("[wakatime] Sending file: " + file);
+				}
+
+				Process p = new Process
+				{
+					StartInfo = {
+						FileName = PythonManager.GetPythonPath (),
+						Arguments = "\"" + clientPath + "\" " + arguments,
+						CreateNoWindow = true,
+						WindowStyle = ProcessWindowStyle.Hidden,
+						WorkingDirectory = dataPath,
+						UseShellExecute = false,
+						RedirectStandardOutput = true,
+						RedirectStandardError = true,
+					}
+				};
+
+				p.Start();
+				p.WaitForExit(5000);
+
+				UnityEngine.Debug.Log("[wakatime] Finished sending file " + file);
+			}
+			catch (Exception ex)
+			{
+				if (Main.IsDebug)
+				{
+					UnityEngine.Debug.LogError("[wakatime] Error found while sending heartbeat to wakatime for file " + file + ": " + ex);
+				}
+			}
 		}
 	}
 }

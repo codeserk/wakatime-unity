@@ -30,6 +30,11 @@ namespace WakaTime
 		public const string KEY_API_KEY = "wakatime_api_key";
 
 		/// <summary>
+		/// Key in editor preferences to get max requests.
+		/// </summary>
+		public const string KEY_MAX_REQUESTS = "wakatime_max_requests";
+
+		/// <summary>
 		/// Name of the current scene.
 		/// </summary>
 		private static string currentScene;
@@ -114,6 +119,35 @@ namespace WakaTime
 		}
 
 		/// <summary>
+		/// Maximun number of concurrent requests to wakatime.
+		/// 5 by default.
+		/// </summary>
+		static int? _maxRequests = null;
+
+		/// <summary>
+		/// Max requests wrapper.
+		/// Gets the value from the editor preferences if it's not set.
+		/// Saves the new value in the editor preferences.
+		/// </summary>
+		public static int MaxRequests
+		{
+			get
+			{
+				if (_maxRequests == null)
+				{
+					_maxRequests = EditorPrefs.GetInt(KEY_API_KEY, 5);
+				}
+
+				return (int)_maxRequests;
+			}
+			set
+			{
+				_maxRequests = value;
+				EditorPrefs.SetInt(KEY_MAX_REQUESTS, value);
+			}
+		}
+
+		/// <summary>
 		/// Last times when the files changed.
 		/// {file path} => {last updated at}
 		/// </summary>
@@ -167,7 +201,7 @@ namespace WakaTime
 		{
 			bool res = false;
 
-			// Checking pythong client is expensive, so only do if the API key is set.
+			// Checking python client is expensive, so only do if the API key is set.
 			if (CheckAPIKey())
 			{
 				res = CheckPython();
@@ -292,11 +326,11 @@ namespace WakaTime
 		/// </summary>
 		/// <param name="path">File path</param>
 		/// <param name="write"></param>
-		static void RequestSendFile(string path, bool write = false)
+		static async void RequestSendFile(string path, bool write = false)
 		{
 			if (Check() && ShouldSendFile(path))
 			{
-				ClientManager.HeartBeat(GetApiKey(), path, write);
+				await ClientManager.HeartBeat(GetApiKey(), path, write);
 			}
 		}
 
@@ -344,7 +378,7 @@ namespace WakaTime
 				Debug.Log("[wakatime] Should send " + path.Substring(path.LastIndexOf("/") + 1) + "? [" + (shouldSendFile ? "yes" : "no") + "]");
 			}
 
-			return shouldSendFile;
+			return true;
 		}
 	}
 }
